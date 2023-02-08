@@ -51,9 +51,9 @@ void listar_todos_clientes_titulares ()
 	printf("\n");
 
 	while (fread(&titular, sizeof(cliente_titular_t), 1, fp_cliente_titular)) {
-    	printf("Codigo: %i\n", &titular.codigo);
+    	printf("Codigo: %i\n", titular.codigo);
     	printf("Nome: %s\n",  titular.nome);
-    	printf("Idade: %i\n",  &titular.idade);
+    	printf("Idade: %i\n",  titular.idade);
 		printf("\n");
 	}
 }
