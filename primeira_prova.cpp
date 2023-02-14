@@ -151,9 +151,9 @@ void listar_todos_clientes_dependentes ()
 		if (!dependente.ativo) {
 			continue;
 		}
-    	printf("Codigo: %i \n",  dependente.codigo);
-    	printf("Nome: %s \n",  dependente.nome);
-    	printf("Idade: %i \n", dependente.idade);
+    		printf("Codigo: %i \n",  dependente.codigo);
+    		printf("Nome: %s \n",  dependente.nome);
+    		printf("Idade: %i \n", dependente.idade);
 		printf("\n");
 	}
 }
