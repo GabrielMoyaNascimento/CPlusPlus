@@ -28,6 +28,7 @@ struct cliente_dependente_t
     
 void cliente_titular_cadastrar ()
 {
+	cliente_titular_t titular;
 
 	printf("Digite o codigo do Titular:\n");
     scanf("%i", &titular.codigo);
