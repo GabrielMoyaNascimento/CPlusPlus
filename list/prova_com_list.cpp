@@ -24,7 +24,7 @@ struct cliente_dependente_t
     FILE *fp_cliente_titular;
     FILE *fp_cliente_dependente;
 	std::list<cliente_titular_t> clientes_titulares;	
-    
+	std::list<cliente_dependente_t> clientes_dependentes;	
     
 void cliente_titular_cadastrar ()
 {
@@ -56,21 +56,21 @@ void cliente_titular_alterar(){
     int codigoAlterar;
     
     printf("Digite o Nome do Titular a ser editado: ");
-    scanf(" %i", &codigo);
+    scanf(" %i", &codigoAlterar);
     
     auto it = clientes_titulares.begin();
     while (it != clientes_titulares.end())
     {
 		if (it->codigo == codigoAlterar)
         {
-            printf("Digite o codigo do Titular:\n");
-			scanf("%i", &it->codigo);
+            //printf("Digite o codigo do Titular:\n");
+			//scanf("%i", it->codigo);
 			
 			printf("Digite o nome do Titular:\n");
 			scanf("%s", it->nome);
 			
 			printf("Digite a idade do Titular:\n");
-			scanf("%i", &it->idade);
+			scanf("%i", it->idade);
         }
         else
         {
@@ -119,26 +119,16 @@ void cliente_dependente_cadastrar ()
     printf("Digite a idade do Dependente:\n");
     scanf("%i", &dependente.idade);
 
-	fseek(fp_cliente_dependente, 0, SEEK_END);
-
-	fwrite(&dependente, sizeof(cliente_dependente_t), 1, fp_cliente_dependente);
-
+    clientes_dependentes.push_back(dependente);
 }
 
 void listar_todos_clientes_dependentes ()
 {
-	cliente_dependente_t dependente;
-
-	fseek(fp_cliente_dependente, 0, SEEK_SET);
-
 	printf("\n");
-
-	while (fread(&dependente, sizeof(cliente_dependente_t), 1, fp_cliente_dependente)) {
-    	printf("Codigo: %i \n",  dependente.codigo);
-    	printf("Nome: %s \n",  dependente.nome);
-    	printf("Idade: %i \n", dependente.idade);
-		printf("\n");
-	}
+	
+    for (const auto& c : clientes_dependentes) {
+	  cout  << "Código:" << c.codigo << std::endl << "Nome: " << c.nome << std::endl << "Idade: " << c.idade << std::endl;
+    }
 }
 
 void cliente_dependente_alterar(){
@@ -173,24 +163,25 @@ void cliente_dependente_alterar(){
 }
 
 void cliente_dependente_excluir(){
-    cliente_dependente_t dependente;
-    char nome[50];
+    int codigoExcluir;
     
-    fseek(fp_cliente_dependente, 0, SEEK_SET);
+    printf("Digite o Código do Titular a ser excluido: ");
+    scanf(" %i", &codigoExcluir);
 
-    printf("Digite o Nome do Dependente a ser excluido: ");
-    scanf(" %s", nome);
-    
-    while(fread(&dependente, sizeof(cliente_dependente_t), 1, fp_cliente_dependente) == 1)
-    { printf("Posicao: %i\n", ftell(fp_cliente_dependente));
-        
-        if(strcmp(dependente.nome, nome)==0){
-          
-            break;
-        } 
-        
+    auto it = clientes_dependentes.begin();
+    while (it != clientes_dependentes.end())
+    {
+		if (it->codigo == codigoExcluir)
+        {
+            it = clientes_dependentes.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
     }
-    printf("Nao foi encontrado nenhum dependente com esse nome...\n");
+	
+	listar_todos_clientes_dependentes();
      
 }
 
