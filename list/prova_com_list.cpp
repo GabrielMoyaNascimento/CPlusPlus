@@ -72,7 +72,7 @@ void listar_todos_clientes (){
 
 	for (const auto& c : clientes) {
 
-		cout  << "C贸digo:" << c->codigo << std::endl << "Nome: " << c->nome << std::endl << "Idade: " << c->idade << std::endl;
+		cout  << "C骴igo:" << c->codigo << std::endl << "Nome: " << c->nome << std::endl << "Idade: " << c->idade << std::endl;
 
 	}
 
@@ -86,46 +86,46 @@ void cliente_alterar(){
 
     
 
-	cout << "Digite o c贸digo do Titular a ser editado: ";
+	cout << "Digite o c骴igo do Titular a ser editado: ";
 
 	scanf(" %d", &codigoAlterar);
 
     
 
 	auto it = clientes.begin();
-	printf(it);
+	while (it != clientes.end()){
+			cliente_t *c = *it;
+			listar_todos_clientes();
 
-//	while (it != clientes.end()){
+		if (c->codigo == codigoAlterar){
 
-//		if (it.codigo == codigoAlterar){
+			cout<<"Digite o nome do Titular:\n";
 
-//			cout<<"Digite o nome do Titular:\n";
+			cin >> c->nome;
 
-//			cin >> it->nome;
+			
 
-//			
+			cout<<"Digite a idade do Titular:\n";
 
-//			cout<<"Digite a idade do Titular:\n";
+			cin >> c->idade;
 
-//			cin >> it->idade;
+			
 
-//			
+			cout<<"Titular alterado com sucesso!\n";
 
-//			cout<<"Titular alterado com sucesso!\n";
+			break;
 
-//			break;
+		}else{
 
-//		}else{
+			++it;
 
-//			++it;
-
-//		}
+		}
 
 	}
 
 	
 
-	cout<<"Nao foi encontrado nenhum titular com esse c贸digo...\n";
+	cout<<"Nao foi encontrado nenhum titular com esse c骴igo...\n";
 
      
 
@@ -139,20 +139,21 @@ void cliente_excluir(){
 
     
 
-	cout<<"Digite o C贸digo do Titular a ser excluido: ";
+	cout<<"Digite o C骴igo do Titular a ser excluido: ";
 
 	scanf(" %i", &codigoExcluir);
 
 
 
 	auto it = clientes.begin();
+	cliente_t *c = *it;
 
 	while (it != clientes.end()){
 
-		if (it->codigo == codigoExcluir){
+		if (c->codigo == codigoExcluir){
 
 			it = clientes.erase(it);
-			delete it;
+			delete c;
 			break;
 
 		}else{
@@ -195,20 +196,6 @@ void menu() {
 
         
 
-		printf(" ----------- Depentente ------------\n");
-
-        
-
-		printf(" 5 - Cadastrar Cliente Dependente \n");
-
-		printf(" 6 - Listar todos Clientes Dependentes \n");
-
-		printf(" 7 - Alterar Cliente Dependente \n");
-
-		printf(" 8 - Excluir Cliente Dependente \n");
-
-        
-
 		printf(" 0 - Sair ...\n"); 
 
 		printf("Digite sua escolha: ");
@@ -221,58 +208,30 @@ void menu() {
 
 		    case 1:
 
-				cliente_titular_cadastrar();
+				cliente_cadastrar();
 
 				break;
 			
 
 		    case 2:
 
-				listar_todos_clientes_titulares();
+				listar_todos_clientes();
 
 				break;
 
 		    
 		    case  3:
 
-				cliente_titular_alterar();
+				cliente_alterar();
 
 				break;
 
 		    
 		    case  4:
 
-				cliente_titular_excluir();
+				cliente_excluir();
 
 				break;
-
-		    
-		    case 5:
-
-				cliente_dependente_cadastrar();
-
-				break;
-
-		    
-		    case 6:
-
-				listar_todos_clientes_dependentes();
-
-				break;
-
-		    
-		    case 7:
-
-				cliente_dependente_alterar();
-
-				break;
-
-		    
-		    case 8:
-
-				cliente_dependente_excluir();
-
-				break;    
 
 		    
 		    case  0:
