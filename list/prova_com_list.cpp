@@ -8,11 +8,7 @@
 
 #include <iostream>
 
-
-
 using namespace std;
-
-
 
 struct cliente_t{
 
@@ -24,73 +20,46 @@ struct cliente_t{
 	cliente_t *titular;
 };
 
-
-
 std::list<cliente_t*> clientes;
-
-
-
-    
 
 void cliente_cadastrar (){
 
 	cliente_t *titular = new cliente_t;
 
-
-
 	cout  <<"Digite o código do cliente:\n";
 
 	scanf("%i", &titular->codigo);
-
-	
 
 	cout  <<"Digite o nome do cliente:\n";
 
 	scanf("%s", titular->nome);
 
-    
-
 	cout  <<"Digite a idade do cliente:\n";
 
 	scanf("%i", &titular->idade);
 
-    
-
 	clientes.push_back(titular);
 
-
-
 }
-
-
 
 void listar_todos_clientes (){
 
 	cout  <<"\n";
-
-	
 
 	for (const auto& c : clientes) {
 
 		cout  << "Código:" << c->codigo << std::endl << "Nome: " << c->nome << std::endl << "Idade: " << c->idade << std::endl;
 
 	}
-
 }
-
-
 
 void cliente_alterar(){
 
 	int codigoAlterar;
 
-    
-
 	cout << "Digite o código a ser editado: ";
 
 	scanf(" %d", &codigoAlterar);
-
-    
 
 	auto it = clientes.begin();
 	while (it != clientes.end()){
@@ -103,13 +72,9 @@ void cliente_alterar(){
 
 			cin >> c->nome;
 
-			
-
 			cout<<"Digite a idade do cliente:\n";
 
 			cin >> c->idade;
-
-			
 
 			cout<<"Cliente alterado com sucesso!\n";
 
@@ -120,30 +85,19 @@ void cliente_alterar(){
 			++it;
 
 		}
-
 	}
-
-	
 
 	cout<<"Nao foi encontrado nenhum cliente com esse código...\n";
 
-     
-
 }
-
-
 
 void cliente_excluir(){
 
 	int codigoExcluir;
 
-    
-
 	cout<<"Digite o Código a ser excluido: ";
 
 	scanf(" %i", &codigoExcluir);
-
-
 
 	auto it = clientes.begin();
 	cliente_t *c = *it;
@@ -159,9 +113,7 @@ void cliente_excluir(){
 		}else{
 
 			++it;
-
 		}
-
 	}
 
 	listar_todos_clientes();
@@ -178,13 +130,7 @@ void menu() {
 
 		cout  <<"\n ===== Clientes Cplusplus ===== \n"; 
 
-		cout  <<"Escolha as opcoes abaixo: \n";
-
-        
-
-		cout  <<" ----------- Titular -------------- \n";
-
-        
+		cout  <<"Escolha as opcoes abaixo: \n";        
 
 		cout  <<" 1 - Cadastrar Cliente cliente \n"; 
 
@@ -194,59 +140,38 @@ void menu() {
 
 		cout  <<" 4 - Excluir Cliente cliente \n";
 
-        
-
-		cout  <<" 0 - Sair ...\n"; 
+        cout  <<" 0 - Sair ...\n"; 
 
 		cout  <<"Digite sua escolha: ";
 
 		scanf("%i", &choice);
 
-        
-
 		switch(choice){
 
 		    case 1:
-
 				cliente_cadastrar();
-
 				break;
 			
-
 		    case 2:
-
 				listar_todos_clientes();
-
 				break;
-
 		    
 		    case  3:
-
 				cliente_alterar();
-
 				break;
-
 		    
 		    case  4:
-
 				cliente_excluir();
-
 				break;
 
-		    
 		    case  0:
-
 				cout  <<"Encerrando o programa...";
-
 				break;
-
 		}  
 
 	} while (choice != 0);
 
 }
-
-
 
 int main (){
 
