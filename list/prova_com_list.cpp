@@ -38,19 +38,19 @@ void cliente_cadastrar (){
 
 
 
-	cout  <<"Digite o codigo do Titular:\n";
+	cout  <<"Digite o c贸digo do cliente:\n";
 
 	scanf("%i", &titular->codigo);
 
 	
 
-	cout  <<"Digite o nome do Titular:\n";
+	cout  <<"Digite o nome do cliente:\n";
 
 	scanf("%s", titular->nome);
 
     
 
-	cout  <<"Digite a idade do Titular:\n";
+	cout  <<"Digite a idade do cliente:\n";
 
 	scanf("%i", &titular->idade);
 
@@ -66,13 +66,13 @@ void cliente_cadastrar (){
 
 void listar_todos_clientes (){
 
-	printf("\n");
+	cout  <<"\n";
 
 	
 
 	for (const auto& c : clientes) {
 
-		cout  << "C骴igo:" << c->codigo << std::endl << "Nome: " << c->nome << std::endl << "Idade: " << c->idade << std::endl;
+		cout  << "C贸digo:" << c->codigo << std::endl << "Nome: " << c->nome << std::endl << "Idade: " << c->idade << std::endl;
 
 	}
 
@@ -86,7 +86,7 @@ void cliente_alterar(){
 
     
 
-	cout << "Digite o c骴igo do Titular a ser editado: ";
+	cout << "Digite o c贸digo a ser editado: ";
 
 	scanf(" %d", &codigoAlterar);
 
@@ -99,19 +99,19 @@ void cliente_alterar(){
 
 		if (c->codigo == codigoAlterar){
 
-			cout<<"Digite o nome do Titular:\n";
+			cout<<"Digite o nome do cliente:\n";
 
 			cin >> c->nome;
 
 			
 
-			cout<<"Digite a idade do Titular:\n";
+			cout<<"Digite a idade do cliente:\n";
 
 			cin >> c->idade;
 
 			
 
-			cout<<"Titular alterado com sucesso!\n";
+			cout<<"Cliente alterado com sucesso!\n";
 
 			break;
 
@@ -125,7 +125,7 @@ void cliente_alterar(){
 
 	
 
-	cout<<"Nao foi encontrado nenhum titular com esse c骴igo...\n";
+	cout<<"Nao foi encontrado nenhum cliente com esse c贸digo...\n";
 
      
 
@@ -139,7 +139,7 @@ void cliente_excluir(){
 
     
 
-	cout<<"Digite o C骴igo do Titular a ser excluido: ";
+	cout<<"Digite o C贸digo a ser excluido: ";
 
 	scanf(" %i", &codigoExcluir);
 
@@ -176,29 +176,29 @@ void menu() {
 
     	do {
 
-		printf("\n ===== Clientes Cplusplus ===== \n"); 
+		cout  <<"\n ===== Clientes Cplusplus ===== \n"; 
 
-		printf("Escolha as opcoes abaixo: \n");
-
-        
-
-		printf(" ----------- Titular -------------- \n");
+		cout  <<"Escolha as opcoes abaixo: \n";
 
         
 
-		printf(" 1 - Cadastrar Cliente Titular \n"); 
-
-		printf(" 2 - Listar todos os Clientes Titulares \n");
-
-		printf(" 3 - Alterar Cliente Titular \n");
-
-		printf(" 4 - Excluir Cliente Titular \n");
+		cout  <<" ----------- Titular -------------- \n";
 
         
 
-		printf(" 0 - Sair ...\n"); 
+		cout  <<" 1 - Cadastrar Cliente cliente \n"; 
 
-		printf("Digite sua escolha: ");
+		cout  <<" 2 - Listar todos os Clientes \n";
+
+		cout  <<" 3 - Alterar Cliente cliente \n";
+
+		cout  <<" 4 - Excluir Cliente cliente \n";
+
+        
+
+		cout  <<" 0 - Sair ...\n"; 
+
+		cout  <<"Digite sua escolha: ";
 
 		scanf("%i", &choice);
 
@@ -236,7 +236,7 @@ void menu() {
 		    
 		    case  0:
 
-				printf("Encerrando o programa...");
+				cout  <<"Encerrando o programa...";
 
 				break;
 
