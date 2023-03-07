@@ -24,11 +24,11 @@ std::list<cliente_t*> clientes;
 
 void cliente_cadastrar (){
 
-	cliente_t *titular = new cliente_t;
+	static int ultimo_codigo = 0;
+    
+    cliente_t *titular = new cliente_t;
 
-	cout  <<"Digite o código do cliente:\n";
-
-	scanf("%i", &titular->codigo);
+    titular->codigo = ++ultimo_codigo;
 
 	cout  <<"Digite o nome do cliente:\n";
 
@@ -37,7 +37,9 @@ void cliente_cadastrar (){
 	cout  <<"Digite a idade do cliente:\n";
 
 	scanf("%i", &titular->idade);
-
+	
+	cout << "\n";
+	
 	clientes.push_back(titular);
 
 }
@@ -49,6 +51,7 @@ void listar_todos_clientes (){
 	for (const auto& c : clientes) {
 
 		cout  << "Código:" << c->codigo << std::endl << "Nome: " << c->nome << std::endl << "Idade: " << c->idade << std::endl;
+		cout << "\n";
 
 	}
 }
