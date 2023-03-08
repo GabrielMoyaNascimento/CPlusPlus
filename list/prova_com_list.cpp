@@ -25,22 +25,40 @@ std::list<cliente_t*> clientes;
 void cliente_cadastrar (){
 
 	static int ultimo_codigo = 0;
+    char ehTitular = 'N';
+    int codigoTitular;
     
-    cliente_t *titular = new cliente_t;
+    cliente_t *cliente = new cliente_t;
 
-    titular->codigo = ++ultimo_codigo;
+    cliente->codigo = ++ultimo_codigo;
 
 	cout  <<"Digite o nome do cliente:\n";
 
-	scanf("%s", titular->nome);
+	scanf("%s", cliente->nome);
 
 	cout  <<"Digite a idade do cliente:\n";
 
-	scanf("%i", &titular->idade);
+	scanf("%i", &cliente->idade);
+	
+	cout <<"Será o titular? (S/N) \n";
+	
+	scanf(" %c", &ehTitular);
+	
+	if(ehTitular == 'N'){
+		cout << "Informe o código do titular: \n";
+		scanf("%i", &codigoTitular);
+		auto it = clientes.begin();
+		while (it != clientes.end()){
+			if(ultimo_codigo == codigoTitular){
+				cliente->titular = *it;
+				break;
+			}
+		}
+	}
 	
 	cout << "\n";
 	
-	clientes.push_back(titular);
+	clientes.push_back(cliente);
 
 }
 
@@ -48,7 +66,7 @@ void listar_todos_clientes (){
 
 	cout  <<"\n";
 
-	for (const auto& c : clientes) {
+	for (const auto c : clientes) {
 
 		cout  << "Código:" << c->codigo << std::endl << "Nome: " << c->nome << std::endl << "Idade: " << c->idade << std::endl;
 		cout << "\n";
@@ -81,7 +99,7 @@ void cliente_alterar(){
 
 			cout<<"Cliente alterado com sucesso!\n";
 
-			break;
+			return;
 
 		}else{
 
@@ -113,10 +131,10 @@ void cliente_excluir(){
 			delete c;
 			break;
 
-		}else{
-
-			++it;
 		}
+		else
+			++it;
+		
 	}
 
 	listar_todos_clientes();
