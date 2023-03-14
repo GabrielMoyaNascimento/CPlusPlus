@@ -25,12 +25,14 @@ std::list<cliente_t*> clientes;
 void cliente_cadastrar (){
 
 	static int ultimo_codigo = 0;
-    char ehTitular = 'N';
-    int codigoTitular;
-    
-    cliente_t *cliente = new cliente_t;
 
-    cliente->codigo = ++ultimo_codigo;
+    	char ehTitular = 'N';
+
+    	int codigoTitular;
+    
+    	cliente_t *cliente = new cliente_t;
+
+    	cliente->codigo = ++ultimo_codigo;
 
 	cout  <<"Digite o nome do cliente:\n";
 
@@ -44,18 +46,26 @@ void cliente_cadastrar (){
 	
 	scanf(" %c", &ehTitular);
 	
-	if(ehTitular == 'N'){
-		cout << "Informe o código do titular: \n";
-		scanf("%i", &codigoTitular);
-		auto it = clientes.begin();
-		while (it != clientes.end()){
-			if(ultimo_codigo == codigoTitular){
-				cliente->titular = *it;
-				break;
-			}
-		}
-	}
+	if (ehTitular == 'N') {
 	
+		cout << "Informe o código do titular: \n";
+		
+		scanf("%i", &codigoTitular);
+		
+		for (auto it = clientes.begin(); it != clientes.end(); it++) {
+		
+		    if (ultimo_codigo == codigoTitular) {
+		    
+		        cliente->titular = *it;
+		        
+		        break;
+		    
+		    }
+		
+		}
+	
+	}
+
 	cout << "\n";
 	
 	clientes.push_back(cliente);
@@ -83,30 +93,26 @@ void cliente_alterar(){
 	scanf(" %d", &codigoAlterar);
 
 	auto it = clientes.begin();
-	while (it != clientes.end()){
-			cliente_t *c = *it;
-			listar_todos_clientes();
+	for (auto it = clientes.begin(); it != clientes.end(); ++it) {
+	
+		cliente_t *c = *it;
+		
+		listar_todos_clientes();
 
-		if (c->codigo == codigoAlterar){
+		if (c->codigo == codigoAlterar) {
+		
+		    cout << "Digite o nome do cliente:\n";
+		    cin >> c->nome;
 
-			cout<<"Digite o nome do cliente:\n";
+		    cout << "Digite a idade do cliente:\n";
+		    cin >> c->idade;
 
-			cin >> c->nome;
-
-			cout<<"Digite a idade do cliente:\n";
-
-			cin >> c->idade;
-
-			cout<<"Cliente alterado com sucesso!\n";
-
-			return;
-
-		}else{
-
-			++it;
-
+		    cout << "Cliente alterado com sucesso!\n";
+		    return;
+		    
 		}
 	}
+
 
 	cout<<"Nao foi encontrado nenhum cliente com esse código...\n";
 
@@ -123,19 +129,20 @@ void cliente_excluir(){
 	auto it = clientes.begin();
 	cliente_t *c = *it;
 
-	while (it != clientes.end()){
-
-		if (c->codigo == codigoExcluir){
-
-			it = clientes.erase(it);
-			delete c;
-			break;
-
+	for (auto it = clientes.begin(); it != clientes.end(); ++it) {
+	
+		if ((*it)->codigo == codigoExcluir) {
+		
+		    delete *it;
+		    
+		    clientes.erase(it);
+		    
+		    break;
+		    
 		}
-		else
-			++it;
 		
 	}
+
 
 	listar_todos_clientes();
 
