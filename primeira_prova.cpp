@@ -10,23 +10,31 @@ struct cliente_t {
 	char nome[50];
 	int codigo;
 	int idade; 
+	// iniciar valor do titular como 0 
 	int titular;
 	bool ativo;
 };
 
 FILE *fp_cliente;
+FILE *fp_ultimo_codigo;
     
-void cliente_cadastrar (){
-	static int ultimo_codigo = 0;
+void cliente_cadastrar ()
+{
+	int ultimo_codigo = 0;
 
 	char ehTitular = 'N';
 
 	int codigoTitular;
-
-	cliente_t cliente;
-
-	cliente.codigo = ++ultimo_codigo;
 	
+	cliente_t cliente;
+	
+	rewind(fp_ultimo_codigo);
+	
+	// pré cadastrar código 0
+	fread(&ultimo_codigo, sizeof(int), 1, fp_ultimo_codigo);
+	
+	cliente.codigo = ultimo_codigo + 1;
+
 	cout  <<"Digite o nome do cliente:\n";
 
 	scanf("%s", cliente.nome);
@@ -41,10 +49,27 @@ void cliente_cadastrar (){
 	
 	if (ehTitular == 'N') {
 	
-		cout << "Informe o código do titular: \n";
+		do {
 		
-		scanf("%i", &codigoTitular);
-	
+			cout << "Informe o código do titular: \n";
+			
+			scanf("%i", &codigoTitular);
+			
+			rewind(fp_cliente);
+			
+			cliente_t titular;
+			
+			while(fread(&titular, sizeof(cliente_t), 1, fp_cliente) == 1)
+			{ 
+			
+				if(titular.codigo == codigoTitular && titular.titular == 0){
+					cliente.titular = codigoTitular;
+				}
+				
+			}
+					
+		}while(cliente.titular == 0);
+		
 	}
 
 	cliente.ativo = true;
@@ -53,14 +78,21 @@ void cliente_cadastrar (){
 	printf("Codigo: %i\n", cliente.codigo);
 	printf("Nome: %s\n",  cliente.nome);
 	printf("Idade: %i\n",  cliente.idade);
+	printf("Código do Titular: %i\n",  cliente.titular);
+
 	printf("\n");
-
+	
 	fseek(fp_cliente, 0, SEEK_END);
-
+	
+	fseek(fp_ultimo_codigo, 0, SEEK_END);
+	
 	fwrite(&cliente, sizeof(cliente), 1, fp_cliente);
+	
+	fwrite(&ultimo_codigo, sizeof(cliente.codigo), 1, fp_ultimo_codigo);
 }
 
-void listar_todos_clientes (){
+void listar_todos_clientes ()
+{
 	cliente_t cliente;
 
 	fseek(fp_cliente, 0, SEEK_SET);
@@ -68,19 +100,18 @@ void listar_todos_clientes (){
 	printf("\n");
 
 	while (fread(&cliente, sizeof(cliente), 1, fp_cliente)) {
-		if (cliente.ativo == false) {
+		if (cliente.ativo == false)
 			continue;
-		}else{
-			printf("Codigo: %i\n", cliente.codigo);
-			printf("Nome: %s\n",  cliente.nome);
-			printf("Idade: %i\n",  cliente.idade);
-			printf("\n");
-		}
+		printf("Codigo: %i\n", cliente.codigo);
+		printf("Nome: %s\n",  cliente.nome);
+		printf("Idade: %i\n",  cliente.idade);
+		printf("\n");
 	}
 	fseek(fp_cliente, 0, SEEK_END);
 }
 
-void cliente_alterar(){
+void cliente_alterar()
+{
 	cliente_t cliente;
 	int codigo;
     
@@ -94,7 +125,7 @@ void cliente_alterar(){
         
 		if(cliente.codigo == codigo){
 		
-			fseek(fp_cliente, -1*sizeof(cliente_t), SEEK_CUR);
+			fseek(fp_cliente, -sizeof(cliente_t), SEEK_CUR);
 			
 			printf("Digite seu nome:\n");
 			scanf("%s", cliente.nome);
@@ -103,9 +134,7 @@ void cliente_alterar(){
 			scanf("%i", &cliente.idade);
 		    
 			fwrite(&cliente, sizeof(cliente), 1, fp_cliente);
-			
-			fseek(fp_cliente, 0, SEEK_END);
-			
+						
 			return;
 			
 		} 
@@ -116,7 +145,10 @@ void cliente_alterar(){
      
 }
 
-void cliente_excluir() {
+
+
+void cliente_excluir()
+{
 	cliente_t cliente;
 	int codigo;
 
@@ -145,7 +177,8 @@ void cliente_excluir() {
 
 
 
-FILE* abrir_criar_arquivo (char *fname, FILE *fp){
+FILE* abrir_criar_arquivo (char *fname, FILE *fp)
+{
 
 	fp = fopen(fname, "r+b");
 
@@ -174,7 +207,8 @@ FILE* abrir_criar_arquivo (char *fname, FILE *fp){
 	return fp;
 }
 
-void menu() {
+void menu()
+{
 	int choice;
 	do {
 		printf("\n ===== Clientes Cplusplus ===== \n"); 
@@ -204,18 +238,23 @@ void menu() {
 			printf("Encerrando o programa...");
 			break;
     
-	}  
+		}  
 	} while (choice != 0);
     
 }
 
-int main (){
-	char fclientetitular[] = "arq-clientes.txt";
+int main ()
+{
+	char fcliente[] = "arq-clientes.txt";
+	char fultimo_codigo[] = "arq-ultimoCodigoCadastrado.txt";
 
-	fp_cliente = abrir_criar_arquivo((char*)fclientetitular, fp_cliente);
-
+	fp_cliente = abrir_criar_arquivo((char*)fcliente, fp_cliente);
+	fp_ultimo_codigo = abrir_criar_arquivo((char*)fultimo_codigo, fp_ultimo_codigo);
     
 	menu();
+
+	fclose(fp_cliente);
+	fclose(fp_ultimo_codigo);
 
 	return 0;
 }
