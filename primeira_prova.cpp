@@ -146,7 +146,7 @@ void cliente_excluir()
 			
 			printf("Cliente excluido com sucesso!\n");
 			
-			return;
+			return; 
 		}
 	}
 
