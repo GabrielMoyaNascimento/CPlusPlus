@@ -15,29 +15,44 @@ struct cliente_t {
 FILE *fp_cliente;
 FILE *fp_ultimo_codigo;
 
+
+
+bool verificar_cliente_com_dependentes(int codigo_cliente, FILE* fp_cliente) {
+    cliente_t cliente;
+    fseek(fp_cliente, 0, SEEK_SET);
+
+    while (fread(&cliente, sizeof(cliente_t), 1, fp_cliente) == 1) {
+        if (cliente.ativo && cliente.titular == codigo_cliente) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void cliente_cadastrar()
 {
-    int ultimo_codigo = 0;
+    int ultimo_codigo;
     char ehTitular = 'N';
     int codigoTitular;
-    cliente_t cliente;
+    cliente_t cliente, novo_cliente;
 
     fseek(fp_ultimo_codigo, 0, SEEK_SET);
     fread(&ultimo_codigo, sizeof(int), 1, fp_ultimo_codigo);
 
-    cliente.codigo = ++ultimo_codigo;
+    novo_cliente.codigo = ++ultimo_codigo;
 
     cout << "Digite o nome do cliente:\n";
-    scanf("%s", cliente.nome);
+    scanf("%s", novo_cliente.nome);
 
     cout << "Digite a idade do cliente:\n";
-    scanf("%i", &cliente.idade);
+    scanf("%i", &novo_cliente.idade);
 
     cout << "Será o titular? (S/N) \n";
     scanf(" %c", &ehTitular);
 
     if (ehTitular == 'N') {
-	    bool titular_encontrado = false;
+        bool titular_encontrado = false;
+        bool titular_com_dependentes = false;
 
         do {
             cout << "Informe o código do titular: \n";
@@ -45,27 +60,34 @@ void cliente_cadastrar()
 
             fseek(fp_cliente, 0, SEEK_SET);
             while (fread(&cliente, sizeof(cliente_t), 1, fp_cliente) == 1) {
-                if (cliente.codigo == codigoTitular && cliente.titular == 0) {
-                    cliente.titular = codigoTitular;
+                if (cliente.codigo == codigoTitular && !verificar_cliente_com_dependentes(cliente.codigo, fp_cliente)) {
+                    novo_cliente.titular = codigoTitular;
                     titular_encontrado = true;
                     break;
                 }
             }
 
+            if(codigoTitular == 0) {
+                return;
+            }
+
             if (!titular_encontrado) {
-                cout << "Código de titular inválido ou já tem um titular. Tente novamente.\n";
+                cout << "Código de titular inválido ou já tem um titular. Tente novamente ou digite 0 para retornar ao menus.\n";
             }
         } while (!titular_encontrado);
     }
 
-    cliente.ativo = true;
+    novo_cliente.ativo = true;
 
     fseek(fp_cliente, 0, SEEK_END);
-    fwrite(&cliente, sizeof(cliente_t), 1, fp_cliente);
+    fwrite(&novo_cliente, sizeof(cliente_t), 1, fp_cliente);
 
     fseek(fp_ultimo_codigo, 0, SEEK_SET);
     fwrite(&ultimo_codigo, sizeof(int), 1, fp_ultimo_codigo);
 }
+
+
+
 
 
 void listar_todos_clientes ()
@@ -124,41 +146,57 @@ void cliente_alterar()
 }
 
 
+bool verificar_titular_com_dependentes(int codigo_cliente, FILE* fp_cliente) {
+    cliente_t cliente;
+    fseek(fp_cliente, 0, SEEK_SET);
+
+    while (fread(&cliente, sizeof(cliente_t), 1, fp_cliente) == 1) {
+        if (cliente.ativo && cliente.titular == codigo_cliente) {
+            if (verificar_cliente_com_dependentes(cliente.codigo, fp_cliente)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
 
 void cliente_excluir()
 {
-	cliente_t cliente;
-	int codigo;
+    cliente_t cliente;
+    int codigo;
 
-	printf("Digite o codigo do Cliente a ser excluido:\n");
-	scanf("%i", &codigo);
+    printf("Digite o codigo do Cliente a ser excluido:\n");
+    scanf("%i", &codigo);
 
-	fseek(fp_cliente, 0, SEEK_SET);
+    if (verificar_titular_com_dependentes(codigo, fp_cliente)) {
+        printf("O cliente nao pode ser excluido porque e titular de algum cliente com dependentes.\n");
+        return;
+    }
 
-	while (fread(&cliente, sizeof(cliente_t), 1, fp_cliente) == 1) {
-		if (cliente.codigo == codigo) {
-		
-			cliente.ativo = false;
-			
-			fseek(fp_cliente, -sizeof(cliente_t), SEEK_CUR);
-			
-			fwrite(&cliente, sizeof(cliente_t), 1, fp_cliente);
-			
-			printf("Cliente excluido com sucesso!\n");
-			
-			return;
-		}
-	}
+    fseek(fp_cliente, 0, SEEK_SET);
 
-	printf("Nao foi encontrado nenhum cliente com esse codigo...\n");
+    while (fread(&cliente, sizeof(cliente_t), 1, fp_cliente) == 1) {
+        if (cliente.codigo == codigo) {
+            cliente.ativo = false;
+
+            fseek(fp_cliente, -sizeof(cliente_t), SEEK_CUR);
+            fwrite(&cliente, sizeof(cliente_t), 1, fp_cliente);
+
+            printf("Cliente excluido com sucesso!\n");
+            return;
+        }
+    }
+
+    printf("Nao foi encontrado nenhum cliente com esse codigo...\n");
 }
 
 
 
-FILE* abrir_criar_arquivo (char *fname, FILE *fp)
+
+FILE* abrir_criar_arquivo (char *fname)
 {
 
-	fp = fopen(fname, "r+b");
+	FILE* fp = fopen(fname, "r+b");
 
 	if (!fp) {
 		fp = fopen(fname, "wb");
@@ -168,6 +206,38 @@ FILE* abrir_criar_arquivo (char *fname, FILE *fp)
 			exit(1);
 		}
 
+		fclose(fp);
+
+		fp = fopen(fname, "r+b");
+
+		if (!fp) {
+			printf("Nao consegui abrir o arquivo %s\n", fname);
+			exit(1);
+		}
+
+		printf("Arquivo %s criado com sucesso\n", fname);
+	}
+
+	printf("Arquivo %s aberto\n", fname);
+
+	return fp;
+}
+
+FILE* criar_codigo (char *fname)
+{
+	
+	FILE* fp = fopen(fname, "r+b");
+
+	if (!fp) {
+		fp = fopen(fname, "wb");
+		int ultimo_codigo = 0;
+
+		if (!fp) {
+			printf("Nao consegui criar o arquivo %s\n", fname);
+			exit(1);
+		}
+		
+		fwrite(&ultimo_codigo, sizeof(int), 1, fp);
 		fclose(fp);
 
 		fp = fopen(fname, "r+b");
@@ -226,8 +296,8 @@ int main ()
 	char fcliente[] = "arq-clientes.txt";
 	char fultimo_codigo[] = "arq-ultimoCodigoCadastrado.txt";
 
-	fp_cliente = abrir_criar_arquivo((char*)fcliente, fp_cliente);
-	fp_ultimo_codigo = abrir_criar_arquivo((char*)fultimo_codigo, fp_ultimo_codigo);
+	fp_cliente = abrir_criar_arquivo((char*)fcliente);
+	fp_ultimo_codigo = criar_codigo((char*)fultimo_codigo);
     
 	menu();
 
